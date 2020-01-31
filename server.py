@@ -133,6 +133,7 @@ while(True == True):
     internet = is_connected("www.google.com")
     while(internet == False):
         doPrint('Connection lost')
+        time.sleep(3)
         internet = is_connected("www.google.com")
         os.system('netsh wlan connect name=SmartCampus>nul')
     if not(check_session(session_id)):
