@@ -51,7 +51,7 @@ def request(req):
 def send(cmd, session_id):
     if not(check_session(session_id)):
         terminate()
-    response = json.loads(download("input?session_id="+session_id+"&input="+cmd))
+    response = json.loads(download("input?session_id="+session_id+"&input="+cmd.replace('&', ';and;')))
     if(len(response)>0):
         if(response[0] == "ERROR"):
             if(response[2] == "Command registration failed."):
@@ -85,7 +85,7 @@ def send(cmd, session_id):
                             print('This means either :\n - An error occured\n - The ouput can\'t or failed to be sent\n - There is no output to be displayed.')
                         else:
                             response_output = response[0]['output']
-                            print(urllib.parse.unquote(response_output).replace(';quote;', '"'))
+                            print(urllib.parse.unquote(response_output).replace(';quote;', '"').replace(';and;', '&'))
                 i = i+1
 
                 if(i == 5):

