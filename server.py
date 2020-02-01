@@ -40,6 +40,10 @@ def download(page):
     try:
         response = requests.get(server + page + "&mode=batch", headers={'Cache-Control': 'no-cache'})
         response = response.content.decode('utf-8', 'ignore')
+        if(response == "This project has received too many requests, please try again later."):
+            print("WARNING: (download) Central server overloaded.")
+            print("WARNING: (download) Waiting 20 seconds for reconnection...")
+            time.sleep(20)
         if(response == "" or response == "<"):
             print("WARNING: (download) Unvalid JSON server response.")
             time.sleep(3)
