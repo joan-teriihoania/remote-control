@@ -71,6 +71,7 @@ def send(cmd, session_id):
             #doPrint("Command sent to the central server referenced (id:"+input_id+")")
             i = 0
             complete = False
+            processing = False
             sent = False
             while(complete == False):
                 # Vérifie si la commande est arrivée sur le serveur de destination
@@ -86,25 +87,23 @@ def send(cmd, session_id):
                 if not(download_response == []):
                     response = json.loads(download_response)
                     if(len(response)>0):
-                        complete = True
+                        processing = True
+                        if(response[0]['output'] == "000-terminate-000")
+                            complete = True
                         if(response[0]['output'] == ""):
-                            print('The server has responded with a null object string text.')
-                            print('This means either :\n - An error occured\n - The ouput can\'t or failed to be sent\n - There is no output to be displayed.')
+                            print("")
+                            #print('The server has responded with a null object string text.')
+                            #print('This means either :\n - An error occured\n - The ouput can\'t or failed to be sent\n - There is no output to be displayed.')
                         else:
                             response_output = response[0]['output']
                             print(urllib.parse.unquote(response_output).replace(';quote;', '"').replace(';and;', '&'))
                 i = i+1
 
-                if(i == 5):
+                if(i == 5 and not(processing)):
                     if (sent):
-                        print('The command reached the server but the server seems')
-                        print('to take a lot of time to respond. This may be caused by :')
-                        print(' - Execution issue')
-                        print(' - Connection problem')
-                        print(' - Server issues')
+                        print('The command reached the server but the server seems to take a lot of time to respond.')
                     else:
                         print('WARN: The command seems to have trouble reaching the destination server.')
-                    print('\n')
 
                 if(i > timeout):
                     print('The command didn\'t received any output from the server in the timeout set.')
@@ -113,7 +112,7 @@ def send(cmd, session_id):
                         print('WARN: The command did not reached the destination server.')
                         print('      Check your connection to the server or try to login again.')
                         print('      Maybe the server crashed. Contact the system admin for more details.')
-                    print('\n')
+                    print('')
 
                     sent_status = "Unknown"
                     if(sent):

