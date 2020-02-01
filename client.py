@@ -75,14 +75,15 @@ def send(cmd, session_id):
             processing = False
             sent = False
             while(complete == False):
-                # Vérifie si la commande est arrivée sur le serveur de destination
-                download_response = download("checkinput?session_id="+session_id+"&input_id="+input_id)
-                if not(download_response == []):
-                    response = json.loads(download_response)
-                    if(len(response)>0):
-                        if(response[1] == "SENT" and sent == False):
-                            #doPrint("Command arrived to destination server with success")
-                            sent = True
+                if not(sent):
+                    # Vérifie si la commande est arrivée sur le serveur de destination
+                    download_response = download("checkinput?session_id="+session_id+"&input_id="+input_id)
+                    if not(download_response == []):
+                        response = json.loads(download_response)
+                        if(len(response)>0):
+                            if(response[1] == "SENT"):
+                                #doPrint("Command arrived to destination server with success")
+                                sent = True
 
                 download_response = download("getoutput?session_id="+session_id)
                 if not(download_response == []):
@@ -96,9 +97,8 @@ def send(cmd, session_id):
                             #print('The server has responded with a null object string text.')
                             #print('This means either :\n - An error occured\n - The ouput can\'t or failed to be sent\n - There is no output to be displayed.')
                         else:
-                           if("000-terminate-000" in response[0]['output']):
-                                response_output = response[0]['output']
-                                print(urllib.parse.unquote(response_output).replace(';quote;', '"').replace(';and;', '&'))
+                            response_output = response[0]['output']
+                            print(urllib.parse.unquote(response_output).replace(';quote;', '"').replace(';and;', '&').replace("000-terminate-000", ""))
                 i = i+1
 
                 if(i == 5 and not(processing)):
@@ -141,8 +141,11 @@ def send(cmd, session_id):
                 #if(complete == False):
                 #    time.sleep(1)
         else:
-            doPrint('The command has been denied.')
-            doPrint('Reason: ' + response[1])
+            if(response[0] == "DENIED"):
+                doPrint('The command has been denied.')
+                doPrint('Reason: ' + response[1])
+            if(response[0] == "ERROR"):
+                doPrint("An error occured: "+response[2])
             return
     else:
         doPrint('Something went wrong.')
