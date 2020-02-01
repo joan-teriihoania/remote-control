@@ -64,8 +64,9 @@ def send(cmd, session_id):
             if(response[2] == "Command registration failed."):
                 #print("Trying to send the command again...")
                 send(cmd, session_id)
-            print("\nAn error occured: "+response[2])
-            return
+            else:
+                print("\nAn error occured: "+response[2])
+                return
         if(response[0] == "GRANTED"):
             input_id = response[2]
             #doPrint("Command sent to the central server referenced (id:"+input_id+")")
@@ -88,15 +89,16 @@ def send(cmd, session_id):
                     response = json.loads(download_response)
                     if(len(response)>0):
                         processing = True
-                        if(response[0]['output'] == "000-terminate-000"):
+                        if("000-terminate-000" in response[0]['output']):
                             complete = True
                         if(response[0]['output'] == ""):
                             print("")
                             #print('The server has responded with a null object string text.')
                             #print('This means either :\n - An error occured\n - The ouput can\'t or failed to be sent\n - There is no output to be displayed.')
                         else:
-                            response_output = response[0]['output']
-                            print(urllib.parse.unquote(response_output).replace(';quote;', '"').replace(';and;', '&'))
+                           if("000-terminate-000" in response[0]['output']):
+                                response_output = response[0]['output']
+                                print(urllib.parse.unquote(response_output).replace(';quote;', '"').replace(';and;', '&'))
                 i = i+1
 
                 if(i == 5 and not(processing)):
@@ -106,30 +108,32 @@ def send(cmd, session_id):
                         print('WARN: The command seems to have trouble reaching the destination server.')
 
                 if(i > timeout):
-                    print('The command didn\'t received any output from the server in the timeout set.')
-                    print('Either this is a server error or a connection error.')
-                    if not(sent):
-                        print('WARN: The command did not reached the destination server.')
-                        print('      Check your connection to the server or try to login again.')
-                        print('      Maybe the server crashed. Contact the system admin for more details.')
-                    print('')
+                    if not(processing):
+                        print('The command didn\'t received any output from the server in the timeout set.')
+                        print('Either this is a server error or a connection error.')
+                        if not(sent):
+                            print('WARN: The command did not reached the destination server.')
+                            print('      Check your connection to the server or try to login again.')
+                            print('      Maybe the server crashed. Contact the system admin for more details.')
+                        print('')
 
-                    sent_status = "Unknown"
-                    if(sent):
-                        sent_status = "Received"
-                    else:
-                        sent_status = "Not received"
-                    print("We will investigate this failure as soon as possible")
-                    print('=================== FAIL REPORT ====================')
-                    print(' SESSION STATUS           : '+check_session_reason(session_id))
-                    print(' REQUEST STATUS (central) : Sent')
-                    print(' REQUEST STATUS (dest)    : '+sent_status)
-                    print('====================================================')
-                    print(" SESSION ID : "+session_id)
-                    print(" INPUT ID   : "+input_id)
-                    print('====================================================')
+                        sent_status = "Unknown"
+                        if(sent):
+                            sent_status = "Received"
+                        else:
+                            sent_status = "Not received"
+                        print("We will investigate this failure as soon as possible")
+                        print('=================== FAIL REPORT ====================')
+                        print(' SESSION STATUS           : '+check_session_reason(session_id))
+                        print(' REQUEST STATUS (central) : Sent')
+                        print(' REQUEST STATUS (dest)    : '+sent_status)
+                        print('====================================================')
+                        print(" SESSION ID : "+session_id)
+                        print(" INPUT ID   : "+input_id)
+                        print('====================================================')
 
                     complete = True
+
                 if not(check_session(session_id)):
                     doPrint('Your session ID is no longer valid.')
                     doPrint('Reason: ' + check_session_reason(session_id))

