@@ -22,21 +22,28 @@ def terminate():
     sys.exit(0)
 
 def download(page):
-    response = requests.get(server + page + "&mode=batch", headers={'Cache-Control': 'no-cache'})
-    response = response.content.decode('utf-8', 'ignore')
-    if(response == "" or response == "<"):
-        #print("WARNING: (download) Unvalid JSON server response.")
-        time.sleep(3)
-        return download(page)
-        return '["ERROR", "Unvalid JSON response."]'
-    else:
-        if(is_json(response)):
-            return response
-        else:
-            #print("WARNING: (download) Unvalid JSON server response.")
+    try:
+        response = requests.get(server + page + "&mode=batch", headers={'Cache-Control': 'no-cache'})
+        response = response.content.decode('utf-8', 'ignore')
+        if(response == "" or response == "<"):
+            print("WARNING: (download) Unvalid JSON server response.")
             time.sleep(3)
             return download(page)
             return '["ERROR", "Unvalid JSON response."]'
+        else:
+            if(is_json(response)):
+                return response
+            else:
+                print("WARNING: (download) Unvalid JSON server response.")
+                time.sleep(3)
+                return download(page)
+                return '["ERROR", "Unvalid JSON response."]'
+    except:
+        pass
+    print("WARNING: (download) Unvalid JSON server response.")
+    time.sleep(3)
+    return download(page)
+    return '["ERROR", "Unvalid JSON response."]'
 
 def is_json(myjson):
   try:
