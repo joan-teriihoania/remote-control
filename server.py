@@ -208,6 +208,7 @@ while(True == True):
                         reboot_file.write(response[0]['session_id'])
                         reboot_file.close()
                         sendOutput(session_id, response[0]['session_id'], "Reboot sequence in progress...", False)
+                        print("Reboot sequence asked by " + response[0]['session_id'])
                         terminate()
                     else:
                         doPrint("("+response[0]['session_id']+") >> "+response[0]['input'].replace(';quote;', '"'))
