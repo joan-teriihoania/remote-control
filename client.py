@@ -88,7 +88,7 @@ def send(cmd, session_id):
                     response = json.loads(download_response)
                     if(len(response)>0):
                         processing = True
-                        if(response[0]['output'] == "000-terminate-000")
+                        if(response[0]['output'] == "000-terminate-000"):
                             complete = True
                         if(response[0]['output'] == ""):
                             print("")
