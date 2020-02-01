@@ -97,27 +97,31 @@ def login():
     
     if(os.path.exists("server_credentials.log")):
         creds_file = open("server_credentials.log")
-        creds = creds_file.readlines()
-        user = creds[0]
-        pwd = creds[1]
-        response = json.loads(download("login?user="+user+"&pwd="+pwd))
-        if(len(response)>0):
-            if(response[0] == "GRANTED"):
-                session_id = response[1]
-                if(check_session(session_id)):
-                    doPrint('Access granted!\n')
-                    return session_id
+        creds = creds_file.read().splitlines()
+        if(len(creds) == 2):
+            user = creds[0]
+            pwd = creds[1]
+            response = json.loads(download("login?user="+user+"&pwd="+pwd))
+            if(len(response)>0):
+                if(response[0] == "GRANTED"):
+                    session_id = response[1]
+                    if(check_session(session_id)):
+                        doPrint('Access granted!\n')
+                        return session_id
+                    else:
+                        terminate()
+                    
                 else:
+                    doPrint("Access denied for this reason: " + response[1])
                     terminate()
-                
             else:
-                doPrint("Access denied for this reason: " + response[1])
+                doPrint("Something went wrong.")
                 terminate()
         else:
-            doPrint("Something went wrong.")
+            doPrint("No password credential found.")
             terminate()
     else:
-        doPrint("No login credentials found. Please create the server_credentials.log file and feed the user and password for the server instance.")
+        doPrint("No login credentials found. Please create the server_credentials.log file\nand feed the user and password for the server instance.")
         terminate()
 
 def doPass(toPrint):
