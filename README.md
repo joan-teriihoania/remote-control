@@ -38,6 +38,8 @@ Le serveur central est une application NodeJS qui fonctionne en permanence et es
 
 L'application NodeJS du serveur central et le package express intégré permettent de contrôler les sessions de chaque instance souhaitant accéder aux données du serveur. Chaque session possédant un identifiant, il est ainsi possible de traquer les différents accès et vérifier les autorisations affectées de chacun d'entre eux.
 
+L'application est actuellement hébergée sur le site [Glitch](www.glitch.com).
+
 ## Client
 Le client est une application Python locale lancé par un utilisateur. En démarrant, celle-ci doit se créer une session temporaire et se récupérer le token correspondant à cette session pour s'identifier auprès du serveur central. Pour cela, l'utilisateur doit, au lancement de l'application, entrer ses identifiants de connexion, sans quoi, le serveur central ne donnera aucun accès au client.
 
