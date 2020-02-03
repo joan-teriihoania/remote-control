@@ -102,7 +102,7 @@ def send(cmd, session_id):
                             #print('This means either :\n - An error occured\n - The ouput can\'t or failed to be sent\n - There is no output to be displayed.')
                         else:
                             response_output = response[0]['output']
-                            print(urllib.parse.unquote(response_output).replace(';quote;', '"').replace(';and;', '&').replace("000-terminate-000", ""))
+                            print(urllib.parse.unquote(response_output).replace(';quote;', '"').replace(';and;', '&').replace(';hashtag;', '#').replace("000-terminate-000", ""))
                 i = i+1
 
                 if(i == 5 and not(processing)):

